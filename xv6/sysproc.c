@@ -104,3 +104,22 @@ int sys_answer(void)
 {
   return 42;
 }
+
+int
+sys_getppid(void)
+{
+  return cpus->proc->parent->pid;
+}
+
+int sys_pscnt(void)
+{
+  int i;
+  int nProcesos = 0;
+  int longitud = sizeof(cpus) / sizeof(cpus[0]);
+  for (i = 0; i < longitud; i++) {
+    if (cpus[i].proc != '\0')
+      nProcesos = nProcesos + 1;
+  }
+
+  return nProcesos;
+}
