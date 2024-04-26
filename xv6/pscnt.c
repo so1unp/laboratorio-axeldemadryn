@@ -2,20 +2,21 @@
 #include "user.h"
 #include "date.h"
 
+int busywork(void)
+{
+    for (;;) {
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    int pid = fork();
+    int i, pid;
 
-    if (pid1 == 0) {
-        printf("Soy el primer proceso hijo, PID: %d\n", getpid());
-    } else {
-        pid2 = fork();
-        
-        if (pid2 == 0) {
-            printf("Soy el segundo proceso hijo, PID: %d\n", getpid());
-        } else {
-            printf("Soy el proceso padre, PID: %d\n", getpid());
-        }
+    for (i = 0; i < 10; i++) {
+       pid = fork();
+       if (pid == 0) {
+          busywork();
+       }
     }
 
     printf(1, "%d\n", pscnt());
