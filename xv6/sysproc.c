@@ -108,7 +108,7 @@ int sys_answer(void)
 int
 sys_getppid(void)
 {
-  return cpus->proc->parent->pid;
+  return myproc()->parent->pid;
 }
 
 int sys_pscnt(void)
