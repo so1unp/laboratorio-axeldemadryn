@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+void *hiloRutina(void *arg) 
+{
+    pthread_exit(NULL);
+}
+
 void test_fork(int count);
 void test_thread(int count);
 
@@ -79,7 +84,9 @@ void test_thread(int count)
     int j;
     
     for (j = 0; j < count; j++) {
-        // COMPLETAR: CREAR UN HILO
-        // COMPLETAR: ESPERAR POR HILO RECIEN CREADO
+        pthread_t hilo;
+        pthread_create(&hilo, NULL, hiloRutina, NULL);
+        pthread_join(hilo, NULL);
     }
+
 }
