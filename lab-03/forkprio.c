@@ -63,10 +63,13 @@ int main(int argc, char *argv[])
        sigaction(SIGINT, &sa, NULL);
     }
 
+
+    int pids[nProcesos];
     if (reducirPrioridad == 1) {
 
       for(i = 0; i < nProcesos; i++) {
          pid = fork();
+         pids[i] = pid;
          if (pid == 0) {
             setpriority(PRIO_PROCESS, 0, i);
             busywork();
@@ -77,6 +80,7 @@ int main(int argc, char *argv[])
      
        for(i = 0; i < nProcesos; i++) {
           pid = fork();
+          pids[i] = pid;
           if (pid == 0) 
             busywork();
        }
@@ -89,7 +93,8 @@ int main(int argc, char *argv[])
     if (nSegundos == 0)
        pause();
     
-    kill(0, SIGTERM);
+    for(i = 0; i < nProcesos; i++) 
+       kill(pids[i], SIGTERM);
 
     exit(EXIT_SUCCESS);
 }
