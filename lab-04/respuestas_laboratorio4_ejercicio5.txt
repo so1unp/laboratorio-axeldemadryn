@@ -1,0 +1,3 @@
+2. Por que popa restaura el estado del hilo interrumpido para así poder seguir ejecutando el hilo actual, hasta que haya otro cambio de contexto.
+
+3. Se implementa Round Robin, ya que cada hilo se ejecuta de manera equitativa.
