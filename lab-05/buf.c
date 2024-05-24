@@ -25,6 +25,10 @@ struct params {
     struct buffer* buf;
 } params_t;
 
+sem_t vacio, lleno;
+
+pthread_mutex_t mutex;
+
 /* Productor */
 static void* producer(void *p)
 {
@@ -33,7 +37,11 @@ static void* producer(void *p)
     struct params *params = (struct params*) p;
 
     for (i = 0; i < params->items; i++) {
+        sem_wait(&vacio);
+        pthread_mutex_lock(&mutex);
         params->buf->buf[i % params->buf->size] = i;
+        pthread_mutex_unlock(&mutex);
+        sem_post(&lleno);
         // Espera una cantidad aleatoria de microsegundos.
         usleep(rand() % params->wait_prod);
     }
@@ -52,7 +60,11 @@ static void* consumer(void *p)
     int *reader_results = (int*) malloc(sizeof(int)*params->items);
 
     for (i = 0; i < params->items; i++) {
+        pthread_mutex_lock(&mutex);
+        sem_wait(&lleno);
         reader_results[i] = params->buf->buf[i % params->buf->size];
+        pthread_mutex_unlock(&mutex);
+        sem_post(&vacio);
         // Espera una cantidad aleatoria de microsegundos.
         usleep(rand() % params->wait_prod);
     }
@@ -133,9 +145,17 @@ int main(int argc, char** argv)
     // Inicializa semilla para números pseudo-aleatorios.
     srand(getpid());
 
+    pthread_mutex_init(&mutex, NULL);
+    sem_init(&lleno, 0, 0);
+    sem_init(&vacio, 0, buf->size);
+
     // Crea productor y consumidor
     pthread_create(&producer_t, NULL, producer, params);
     pthread_create(&consumer_t, NULL, consumer, params);
+
+    sem_destroy(&lleno);
+    sem_destroy(&vacio);
+    pthread_mutex_destroy(&mutex);
 
     // Mi trabajo ya esta hecho ...
     pthread_exit(NULL);
